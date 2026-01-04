@@ -60,12 +60,12 @@ func main() {
 
 	// Send macOS notification
 	if err := sendNotification(notificationTitle, eventMessage); err != nil {
-		log.Printf("Error sending notification: %v", err)
+		log.Fatalf("Error sending notification: %v", err)
 	}
 
 	// Log the event
 	if err := logEvent(hookType, eventMessage); err != nil {
-		log.Printf("Error logging event: %v", err)
+		log.Fatalf("Error logging event: %v", err)
 	}
 }
 

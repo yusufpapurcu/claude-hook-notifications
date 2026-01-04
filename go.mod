@@ -1,3 +1,3 @@
 module github.com/yusufpapurcu/claude-hook-notifications
 
-go 1.20
+go 1.23

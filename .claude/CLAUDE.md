@@ -67,7 +67,7 @@ Log format:
   ```bash
   brew install terminal-notifier
   ```
-- Go 1.20+ (for building the binary)
+- Go 1.23+ (for building the binary)
 
 ## Installation
 

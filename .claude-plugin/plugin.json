@@ -1,9 +1,21 @@
 {
   "name": "claude-hook-notifications",
   "version": "1.0.0",
-  "description": "macOS notifications for Claude Code completion and permission request hooks",
+  "description": "Get native macOS notifications when Claude Code needs your attention. Never miss when Claude Code finishes a task or needs your permission - perfect for long-running tasks or when working in other applications.",
   "author": {
     "name": "Yusuf Turhan Papurcu"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "homepage": "https://github.com/yusufpapurcu/claude-hook-notifications",
+  "repository": "https://github.com/yusufpapurcu/claude-hook-notifications",
+  "keywords": [
+    "hooks",
+    "notifications",
+    "macos",
+    "productivity",
+    "desktop-notifications",
+    "task-completion",
+    "alerts"
+  ],
+  "category": "productivity"
 }
