@@ -1,10 +1,17 @@
-.PHONY: build install clean
+.PHONY: build install clean deps
+
+# Install dependencies
+deps:
+	@echo "Installing dependencies..."
+	@npm install
 
 # Build the notification binary
-build:
+build: deps
 	@echo "Building notification binary..."
 	@mkdir -p bin
-	@go build -o bin/notify main.go
+	@npm run build
+	@cp dist/notify.js bin/notify
+	@chmod +x bin/notify
 	@echo "Built bin/notify"
 
 # Install the plugin to Claude Code plugins directory
@@ -18,5 +25,5 @@ install: build
 # Clean build artifacts
 clean:
 	@echo "Cleaning build artifacts..."
-	@rm -rf bin/notify
+	@rm -rf bin/notify dist node_modules
 	@echo "Clean complete."

@@ -1,1 +1,3 @@
 bin/notify
+node_modules/
+dist/
