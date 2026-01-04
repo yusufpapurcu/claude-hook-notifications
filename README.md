@@ -14,6 +14,7 @@ Get native macOS desktop notifications when Claude Code completes tasks or reque
 ### Prerequisites
 
 - macOS
+- Node.js
 - [terminal-notifier](https://github.com/julienXX/terminal-notifier): `brew install terminal-notifier`
 
 ### Installation
@@ -26,44 +27,22 @@ claude plugin install claude-hook-notifications
 
 # Restart Claude Code to load the plugin, then run:
 /install-notifications
-
-# Or manually run the installation script:
-cd ~/.claude/plugins/marketplaces/claude-hook-notifications-marketplace/claude-hook-notifications
-./install.sh
 ```
 
-The `/install-notifications` command will automatically download and install the correct binary for your system.
+The `/install-notifications` command will automatically install npm dependencies and verify the setup.
 
-#### Option 2: Download Pre-built Binary
-
-```bash
-# Download the latest release for your system from:
-# https://github.com/yusufpapurcu/claude-hook-notifications/releases
-# - Apple Silicon (M1/M2/M3): claude-hook-notifications-darwin-arm64.tar.gz
-# - Intel: claude-hook-notifications-darwin-amd64.tar.gz
-
-# Extract the archive
-tar -xzf claude-hook-notifications-darwin-*.tar.gz
-cd claude-hook-notifications
-
-# Install to Claude plugins directory
-cp -r . ~/.claude/plugins/claude-hook-notifications
-
-# Restart Claude Code to load the plugin
-```
-
-#### Option 3: Build from Source
-
-Requires Go 1.23+
+#### Option 2: Clone and Install
 
 ```bash
 # Clone the repository
 git clone https://github.com/yusufpapurcu/claude-hook-notifications.git
 cd claude-hook-notifications
 
-# Build and install
-make build
-make install
+# Install dependencies
+npm install
+
+# Install to Claude plugins directory
+npm run plugin:install
 
 # Restart Claude Code to load the plugin
 ```
@@ -76,7 +55,7 @@ That's it! Notifications will now appear automatically when Claude Code complete
 
 Once installed, you can use this slash command in Claude Code:
 
-- `/install-notifications` - Install or verify the notification binary
+- `/install-notifications` - Install dependencies and verify the plugin setup
 
 Simply type `/install-notifications` in your Claude Code session and Claude will handle the installation automatically.
 
@@ -112,14 +91,14 @@ For detailed documentation, architecture details, and development guide, see [CL
 Test notifications manually:
 
 ```bash
-# Build the binary
-make build
+# Install dependencies
+npm install
 
 # Test the stop notification
-echo '{"cwd":"'$(pwd)'"}' | ./bin/notify stop
+echo '{"cwd":"'$(pwd)'"}' | npx tsx src/notify.ts stop
 
 # Test the permission request notification
-echo '{"cwd":"'$(pwd)'"}' | ./bin/notify permission-request
+echo '{"cwd":"'$(pwd)'"}' | npx tsx src/notify.ts permission-request
 
 # Check the logs
 tail -f ~/.claude/hook-notifications.log
@@ -129,19 +108,10 @@ tail -f ~/.claude/hook-notifications.log
 
 ### Notifications Not Appearing
 
-**1. Check if the binary exists:**
-```bash
-# For marketplace installation:
-ls -la ~/.claude/plugins/marketplaces/claude-hook-notifications-marketplace/claude-hook-notifications/bin/notify
-
-# For manual installation:
-ls -la ~/.claude/plugins/claude-hook-notifications/bin/notify
-```
-
-If the binary doesn't exist, run the installation script:
+**1. Check if dependencies are installed:**
 ```bash
 cd [plugin-directory]
-./install.sh
+npm install
 ```
 
 **2. Verify terminal-notifier is installed:**
@@ -153,10 +123,10 @@ which terminal-notifier
 brew install terminal-notifier
 ```
 
-**3. Test the binary manually:**
+**3. Test the script manually:**
 ```bash
 cd [plugin-directory]
-echo '{"cwd":"test"}' | ./bin/notify stop
+echo '{"cwd":"test"}' | npx tsx src/notify.ts stop
 ```
 
 You should see a notification and a log entry in `~/.claude/hook-notifications.log`.
@@ -171,17 +141,6 @@ tail -20 ~/.claude/hook-notifications.log
 # List installed plugins
 claude plugin list
 ```
-
-### Binary Download Fails
-
-If `install.sh` fails to download the binary:
-
-1. Check your internet connection
-2. Verify releases exist at: https://github.com/yusufpapurcu/claude-hook-notifications/releases
-3. Manually download the appropriate release for your architecture:
-   - Apple Silicon: `claude-hook-notifications-darwin-arm64.tar.gz`
-   - Intel: `claude-hook-notifications-darwin-amd64.tar.gz`
-4. Extract and place the `notify` binary in the plugin's `bin/` directory
 
 ### Wrong Installation Path
 
