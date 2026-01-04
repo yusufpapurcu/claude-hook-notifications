@@ -57,18 +57,30 @@ jobs:
           mv claude-hook-notifications-darwin-amd64.tar.gz ../release/
           cd ..
 
+      - name: Generate checksums
+        run: |
+          cd release
+          shasum -a 256 *.tar.gz > checksums.txt
+          cat checksums.txt
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
             release/claude-hook-notifications-darwin-arm64.tar.gz
             release/claude-hook-notifications-darwin-amd64.tar.gz
+            release/checksums.txt
           body: |
             ## Installation
 
             Download the appropriate archive for your system:
             - **Apple Silicon (M1/M2/M3)**: `claude-hook-notifications-darwin-arm64.tar.gz`
             - **Intel**: `claude-hook-notifications-darwin-amd64.tar.gz`
+
+            ### Verify checksum (recommended)
+            ```bash
+            shasum -a 256 -c checksums.txt --ignore-missing
+            ```
 
             Then extract and install:
             ```bash

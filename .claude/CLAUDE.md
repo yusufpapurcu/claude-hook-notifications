@@ -103,7 +103,21 @@ Once installed, the plugin runs automatically in the background. You'll receive 
 - Claude Code finishes processing a task
 - Claude Code requests your permission for an operation
 
-No manual interaction is required - the plugin integrates seamlessly with Claude Code's hook system.
+### Slash Commands
+
+The plugin provides the following slash command:
+
+- `/install-notifications` - Automatically download and install the notification binary for your system
+
+When you run this command in Claude Code, Claude will:
+1. Check if the binary is already installed
+2. Run the installation script if needed
+3. Verify terminal-notifier is installed
+4. Test the binary and show recent notifications
+
+This command is particularly useful for marketplace installations where the binary isn't included in the repository.
+
+No other manual interaction is required - the plugin integrates seamlessly with Claude Code's hook system.
 
 ## Development
 
@@ -112,14 +126,18 @@ No manual interaction is required - the plugin integrates seamlessly with Claude
 ```
 .
 ├── main.go                    # Main notification binary
+├── install.sh                 # Binary installation script
 ├── bin/                       # Compiled binaries
 │   └── notify                 # The notification executable
 ├── hooks/
 │   └── hooks.json            # Hook configuration for Claude Code
+├── commands/
+│   └── install-notifications.md  # Installation slash command
 ├── .claude/
 │   └── CLAUDE.md             # This file
 └── .claude-plugin/
-    └── plugin.json           # Plugin manifest
+    ├── plugin.json           # Plugin manifest
+    └── marketplace.json      # Marketplace configuration
 ```
 
 ### Building
