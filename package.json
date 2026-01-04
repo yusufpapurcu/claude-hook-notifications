@@ -2,16 +2,15 @@
   "name": "claude-hook-notifications",
   "version": "1.0.0",
   "description": "macOS desktop notifications for Claude Code hooks",
-  "main": "dist/notify.js",
-  "bin": {
-    "notify": "./dist/notify.js"
-  },
+  "main": "src/notify.ts",
   "scripts": {
-    "build": "tsc && chmod +x dist/notify.js",
-    "clean": "rm -rf dist"
+    "notify": "tsx src/notify.ts"
   },
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "tsx": "^4.19.0"
+  },
   "devDependencies": {
     "@types/node": "^22.0.0",
     "typescript": "^5.7.0"

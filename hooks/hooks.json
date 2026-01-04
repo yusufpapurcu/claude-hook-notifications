@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/bin/notify stop"
+            "command": "npx tsx ${CLAUDE_PLUGIN_ROOT}/src/notify.ts stop"
           }
         ]
       }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/bin/notify permission-request"
+            "command": "npx tsx ${CLAUDE_PLUGIN_ROOT}/src/notify.ts permission-request"
           }
         ]
       }
