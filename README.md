@@ -38,7 +38,7 @@ cp -r . ~/.claude/plugins/claude-hook-notifications
 
 #### Option 2: Build from Source
 
-Requires Go 1.20+
+Requires Go 1.23+
 
 ```bash
 # Clone the repository
