@@ -1,60 +1,33 @@
 {
-  "displayName": "Hook Notifications for macOS",
-  "tagline": "Get native macOS notifications when Claude Code needs your attention",
-  "description": "Never miss when Claude Code finishes a task or needs your permission. This plugin sends native macOS notifications for key events during Claude Code sessions, perfect for long-running tasks or when working in other applications.",
-  "categories": [
-    "productivity",
-    "notifications",
-    "hooks"
-  ],
-  "tags": [
-    "macos",
-    "notifications",
-    "hooks",
-    "desktop",
-    "alerts"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/yusufpapurcu/claude-hook-notifications"
+  "name": "claude-hook-notifications-marketplace",
+  "owner": {
+    "name": "Yusuf Turhan Papurcu"
   },
-  "homepage": "https://github.com/yusufpapurcu/claude-hook-notifications",
-  "platform": {
-    "os": ["darwin"],
-    "minVersion": "1.0.0"
+  "metadata": {
+    "description": "macOS notification plugins for Claude Code",
+    "version": "1.0.0"
   },
-  "features": [
-    "Native macOS notifications when Claude Code completes tasks",
-    "Alerts when Claude Code requests permission",
-    "Customizable notification icons",
-    "Automatic event logging for debugging"
-  ],
-  "prerequisites": [
+  "plugins": [
     {
-      "name": "terminal-notifier",
-      "description": "Required for sending macOS notifications",
-      "install": "brew install terminal-notifier"
-    },
-    {
-      "name": "Go 1.23+",
-      "description": "Required for building the notification binary",
-      "install": "https://golang.org/doc/install"
+      "name": "claude-hook-notifications",
+      "source": "./",
+      "description": "Get native macOS notifications when Claude Code needs your attention. Never miss when Claude Code finishes a task or needs your permission - perfect for long-running tasks or when working in other applications.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Yusuf Turhan Papurcu"
+      },
+      "homepage": "https://github.com/yusufpapurcu/claude-hook-notifications",
+      "repository": "https://github.com/yusufpapurcu/claude-hook-notifications",
+      "license": "MIT",
+      "keywords": [
+        "hooks",
+        "notifications",
+        "macos",
+        "productivity",
+        "desktop-notifications",
+        "task-completion"
+      ],
+      "category": "productivity"
     }
-  ],
-  "setup": {
-    "instructions": [
-      "Build the notification binary: `make build` or `go build -o bin/notify main.go`",
-      "Install terminal-notifier: `brew install terminal-notifier`",
-      "The plugin will start working automatically once installed"
-    ]
-  },
-  "screenshots": [],
-  "keywords": [
-    "hooks",
-    "notifications",
-    "macos",
-    "productivity",
-    "desktop notifications",
-    "task completion"
   ]
 }
