@@ -4,7 +4,8 @@
   "description": "macOS desktop notifications for Claude Code hooks",
   "main": "src/notify.ts",
   "scripts": {
-    "notify": "tsx src/notify.ts"
+    "notify": "tsx src/notify.ts",
+    "plugin:install": "mkdir -p ~/.claude/plugins/claude-hook-notifications && cp -r hooks .claude-plugin src package.json package-lock.json ~/.claude/plugins/claude-hook-notifications/ && cd ~/.claude/plugins/claude-hook-notifications && npm install --silent && echo 'Plugin installed. Restart Claude Code to load.'"
   },
   "author": "",
   "license": "MIT",
