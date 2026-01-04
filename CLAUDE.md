@@ -160,16 +160,6 @@ tail -f ~/.claude/hook-notifications.log
 **Modifying hook behavior:**
 Edit `hooks/hooks.json` to change which events trigger notifications or add new event types.
 
-### Extension Ideas
-
-If you want to extend this plugin, consider:
-
-1. Adding support for more hook events (e.g., `BeforeToolUse`, `AfterToolUse`)
-2. Making notification sounds configurable
-3. Adding notification action buttons (requires `terminal-notifier` actions)
-4. Supporting other notification systems (Linux, Windows)
-5. Adding notification filtering based on project or event type
-
 ## License
 
 MIT
