@@ -16,8 +16,5 @@
     "desktop-notifications",
     "task-completion",
     "alerts"
-  ],
-  "slashCommands": {
-    "install-notifications": "${CLAUDE_PLUGIN_ROOT}/commands/install-notifications.md"
-  }
+  ]
 }
