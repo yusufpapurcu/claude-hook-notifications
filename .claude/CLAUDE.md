@@ -116,9 +116,10 @@ No manual interaction is required - the plugin integrates seamlessly with Claude
 │   └── notify                 # The notification executable
 ├── hooks/
 │   └── hooks.json            # Hook configuration for Claude Code
-├── .claude-plugin/
-│   └── plugin.json           # Plugin manifest
-└── CLAUDE.md                 # This file
+├── .claude/
+│   └── CLAUDE.md             # This file
+└── .claude-plugin/
+    └── plugin.json           # Plugin manifest
 ```
 
 ### Building
