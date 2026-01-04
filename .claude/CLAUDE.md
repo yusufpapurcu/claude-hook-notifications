@@ -131,7 +131,7 @@ No other manual interaction is required - the plugin integrates seamlessly with 
 │   └── notify                 # The notification executable
 ├── hooks/
 │   └── hooks.json            # Hook configuration for Claude Code
-├── slash-commands/
+├── commands/
 │   └── install-notifications.md  # Installation slash command
 ├── .claude/
 │   └── CLAUDE.md             # This file

@@ -18,6 +18,6 @@
     "alerts"
   ],
   "slashCommands": {
-    "install-notifications": "${CLAUDE_PLUGIN_ROOT}/slash-commands/install-notifications.md"
+    "install-notifications": "${CLAUDE_PLUGIN_ROOT}/commands/install-notifications.md"
   }
 }
