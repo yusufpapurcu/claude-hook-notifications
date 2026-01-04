@@ -40,7 +40,7 @@ jobs:
           cp -r .claude-plugin hooks release-arm64/claude-hook-notifications/
           mkdir -p release-arm64/claude-hook-notifications/bin
           cp bin/notify-darwin-arm64 release-arm64/claude-hook-notifications/bin/notify
-          cp README.md LICENSE .claude/CLAUDE.md release-arm64/claude-hook-notifications/
+          cp README.md LICENSE release-arm64/claude-hook-notifications/
           cd release-arm64
           tar -czf claude-hook-notifications-darwin-arm64.tar.gz claude-hook-notifications
           mv claude-hook-notifications-darwin-arm64.tar.gz ../release/
@@ -51,7 +51,7 @@ jobs:
           cp -r .claude-plugin hooks release-amd64/claude-hook-notifications/
           mkdir -p release-amd64/claude-hook-notifications/bin
           cp bin/notify-darwin-amd64 release-amd64/claude-hook-notifications/bin/notify
-          cp README.md LICENSE .claude/CLAUDE.md release-amd64/claude-hook-notifications/
+          cp README.md LICENSE release-amd64/claude-hook-notifications/
           cd release-amd64
           tar -czf claude-hook-notifications-darwin-amd64.tar.gz claude-hook-notifications
           mv claude-hook-notifications-darwin-amd64.tar.gz ../release/
