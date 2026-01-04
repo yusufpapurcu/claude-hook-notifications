@@ -34,15 +34,32 @@ fi
 
 echo "Detected system: darwin-${ARCH_NAME}"
 
-# Get the latest release tag
+# Fallback version if API rate limit is hit
+FALLBACK_VERSION="v1.0.0"
+
+# Get the latest release tag with rate limit handling
 echo "Fetching latest release information..."
-RELEASE_INFO=$(curl -sL "$LATEST_RELEASE_URL")
-TAG=$(echo "$RELEASE_INFO" | grep '"tag_name":' | sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
+RELEASE_RESPONSE=$(curl -sL -w "\n%{http_code}" "$LATEST_RELEASE_URL")
+RELEASE_HTTP_CODE=$(echo "$RELEASE_RESPONSE" | tail -n1)
+RELEASE_INFO=$(echo "$RELEASE_RESPONSE" | sed '$d')
+
+TAG=""
+if [ "$RELEASE_HTTP_CODE" -eq 200 ]; then
+    TAG=$(echo "$RELEASE_INFO" | grep '"tag_name":' | sed -E 's/.*"tag_name": "([^"]+)".*/\1/')
+fi
 
 if [ -z "$TAG" ]; then
-    echo "Error: Could not determine latest release version"
-    echo "Please check https://github.com/${REPO}/releases"
-    exit 1
+    if [ "$RELEASE_HTTP_CODE" -eq 403 ]; then
+        echo "Warning: GitHub API rate limit reached. Using fallback version: $FALLBACK_VERSION"
+        TAG="$FALLBACK_VERSION"
+    elif [ "$RELEASE_HTTP_CODE" -eq 404 ]; then
+        echo "Error: Repository or releases not found"
+        echo "Please check https://github.com/${REPO}/releases"
+        exit 1
+    else
+        echo "Warning: Could not fetch latest release (HTTP $RELEASE_HTTP_CODE). Using fallback version: $FALLBACK_VERSION"
+        TAG="$FALLBACK_VERSION"
+    fi
 fi
 
 echo "Latest release: $TAG"
@@ -58,34 +75,71 @@ echo "Downloading from: $DOWNLOAD_URL"
 TMP_DIR=$(mktemp -d)
 trap "rm -rf $TMP_DIR" EXIT
 
-# Download and extract
+# Download and extract with proper error handling
 cd "$TMP_DIR"
-if ! curl -sL "$DOWNLOAD_URL" -o "$ARCHIVE_NAME"; then
-    echo "Error: Failed to download binary"
+HTTP_CODE=$(curl -sL -w "%{http_code}" "$DOWNLOAD_URL" -o "$ARCHIVE_NAME")
+if [ "$HTTP_CODE" -ne 200 ]; then
+    echo "Error: Failed to download binary (HTTP $HTTP_CODE)"
+    case "$HTTP_CODE" in
+        404)
+            echo "The release archive was not found. Please check if the release exists."
+            ;;
+        403)
+            echo "Access forbidden. You may have hit GitHub's rate limit."
+            ;;
+        000)
+            echo "Network error. Please check your internet connection."
+            ;;
+        *)
+            echo "Unexpected HTTP error occurred."
+            ;;
+    esac
     echo "URL: $DOWNLOAD_URL"
     exit 1
+fi
+
+# Verify checksum if available
+CHECKSUM_FILE="checksums.txt"
+CHECKSUM_URL="https://github.com/${REPO}/releases/download/${TAG}/${CHECKSUM_FILE}"
+echo "Verifying checksum..."
+CHECKSUM_HTTP_CODE=$(curl -sL -w "%{http_code}" "$CHECKSUM_URL" -o "$CHECKSUM_FILE")
+if [ "$CHECKSUM_HTTP_CODE" -eq 200 ]; then
+    # Extract expected checksum for our archive
+    EXPECTED_CHECKSUM=$(grep "${ARCHIVE_NAME}" "$CHECKSUM_FILE" | awk '{print $1}')
+    if [ -n "$EXPECTED_CHECKSUM" ]; then
+        ACTUAL_CHECKSUM=$(shasum -a 256 "$ARCHIVE_NAME" | awk '{print $1}')
+        if [ "$EXPECTED_CHECKSUM" != "$ACTUAL_CHECKSUM" ]; then
+            echo "Error: Checksum verification failed!"
+            echo "Expected: $EXPECTED_CHECKSUM"
+            echo "Actual:   $ACTUAL_CHECKSUM"
+            echo "The downloaded file may be corrupted or tampered with."
+            exit 1
+        fi
+        echo "✓ Checksum verified"
+    else
+        echo "Warning: No checksum found for ${ARCHIVE_NAME} in checksums file"
+    fi
+else
+    echo "Warning: Checksum file not available (HTTP $CHECKSUM_HTTP_CODE). Skipping verification."
+    echo "Consider publishing checksums with releases for enhanced security."
 fi
 
 echo "Extracting binary..."
 tar -xzf "$ARCHIVE_NAME"
 
-# Find the binary in the extracted archive
-# Try multiple possible locations
-BINARY_PATH=""
-for possible_path in \
-    "bin/${BINARY_NAME}" \
-    "${BINARY_NAME}" \
-    "claude-hook-notifications/bin/${BINARY_NAME}" \
-    "*/bin/${BINARY_NAME}"; do
+# Find the binary in the extracted archive using find for safety
+# This avoids shell injection vulnerabilities from malicious archive contents
+BINARY_PATH=$(find . -type f -name "${BINARY_NAME}" -print -quit 2>/dev/null)
 
-    # Use glob expansion for wildcard patterns
-    for expanded_path in $possible_path; do
-        if [ -f "$expanded_path" ]; then
-            BINARY_PATH="$expanded_path"
-            break 2
+# If not found by name, check specific known locations
+if [ -z "$BINARY_PATH" ]; then
+    for possible_path in "bin/${BINARY_NAME}" "${BINARY_NAME}" "claude-hook-notifications/bin/${BINARY_NAME}"; do
+        if [ -f "$possible_path" ]; then
+            BINARY_PATH="$possible_path"
+            break
         fi
     done
-done
+fi
 
 if [ -z "$BINARY_PATH" ]; then
     echo "Error: Could not find binary '${BINARY_NAME}' in archive"
