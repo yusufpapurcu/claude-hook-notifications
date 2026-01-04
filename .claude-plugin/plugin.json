@@ -1,0 +1,9 @@
+{
+  "name": "claude-hook-notifications",
+  "version": "1.0.0",
+  "description": "macOS notifications for Claude Code completion and permission request hooks",
+  "author": {
+    "name": "Yusuf Turhan Papurcu"
+  },
+  "license": "MIT"
+}
