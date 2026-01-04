@@ -18,6 +18,11 @@ interface HookContext {
 }
 
 async function readHookContext(): Promise<HookContext> {
+  // Check TTY first to avoid setting up listeners that will never fire
+  if (process.stdin.isTTY) {
+    return {};
+  }
+
   return new Promise((resolve) => {
     let data = "";
 
@@ -39,11 +44,6 @@ async function readHookContext(): Promise<HookContext> {
         resolve({});
       }
     });
-
-    // Handle case where stdin is empty/closed immediately
-    if (process.stdin.isTTY) {
-      resolve({});
-    }
   });
 }
 
@@ -97,7 +97,9 @@ async function logEvent(hookType: string, eventMessage: string): Promise<void> {
 
   await mkdir(logDir, { recursive: true });
 
-  const timestamp = new Date().toISOString().replace("T", " ").slice(0, 19);
+  // Use local time format matching the original Go implementation
+  const now = new Date();
+  const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
   const logEntry = `[${timestamp}] Hook: ${hookType} Event: ${eventMessage}\n`;
 
   await appendFile(logPath, logEntry, { encoding: "utf8" });
