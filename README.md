@@ -18,7 +18,23 @@ Get native macOS desktop notifications when Claude Code completes tasks or reque
 
 ### Installation
 
-#### Option 1: Download Pre-built Binary (Recommended)
+#### Option 1: Via Claude Code Marketplace (Easiest)
+
+```bash
+# Install via Claude Code
+claude plugin install claude-hook-notifications
+
+# Restart Claude Code to load the plugin, then run:
+/install-notifications
+
+# Or manually run the installation script:
+cd ~/.claude/plugins/marketplaces/claude-hook-notifications-marketplace/claude-hook-notifications
+./install.sh
+```
+
+The `/install-notifications` command will automatically download and install the correct binary for your system.
+
+#### Option 2: Download Pre-built Binary
 
 ```bash
 # Download the latest release for your system from:
@@ -36,7 +52,7 @@ cp -r . ~/.claude/plugins/claude-hook-notifications
 # Restart Claude Code to load the plugin
 ```
 
-#### Option 2: Build from Source
+#### Option 3: Build from Source
 
 Requires Go 1.23+
 
@@ -53,6 +69,18 @@ make install
 ```
 
 That's it! Notifications will now appear automatically when Claude Code completes tasks or requests permissions.
+
+## Usage
+
+### Slash Commands
+
+Once installed, you can use this slash command in Claude Code:
+
+- `/install-notifications` - Install or verify the notification binary
+
+Simply type `/install-notifications` in your Claude Code session and Claude will handle the installation automatically.
+
+The plugin works automatically in the background - no manual interaction needed after installation.
 
 ## How It Works
 
@@ -96,6 +124,72 @@ echo '{"cwd":"'$(pwd)'"}' | ./bin/notify permission-request
 # Check the logs
 tail -f ~/.claude/hook-notifications.log
 ```
+
+## Troubleshooting
+
+### Notifications Not Appearing
+
+**1. Check if the binary exists:**
+```bash
+# For marketplace installation:
+ls -la ~/.claude/plugins/marketplaces/claude-hook-notifications-marketplace/claude-hook-notifications/bin/notify
+
+# For manual installation:
+ls -la ~/.claude/plugins/claude-hook-notifications/bin/notify
+```
+
+If the binary doesn't exist, run the installation script:
+```bash
+cd [plugin-directory]
+./install.sh
+```
+
+**2. Verify terminal-notifier is installed:**
+```bash
+which terminal-notifier
+# Should output: /opt/homebrew/bin/terminal-notifier (or similar)
+
+# If not installed:
+brew install terminal-notifier
+```
+
+**3. Test the binary manually:**
+```bash
+cd [plugin-directory]
+echo '{"cwd":"test"}' | ./bin/notify stop
+```
+
+You should see a notification and a log entry in `~/.claude/hook-notifications.log`.
+
+**4. Check the logs:**
+```bash
+tail -20 ~/.claude/hook-notifications.log
+```
+
+**5. Verify Claude Code loaded the plugin:**
+```bash
+# List installed plugins
+claude plugin list
+```
+
+### Binary Download Fails
+
+If `install.sh` fails to download the binary:
+
+1. Check your internet connection
+2. Verify releases exist at: https://github.com/yusufpapurcu/claude-hook-notifications/releases
+3. Manually download the appropriate release for your architecture:
+   - Apple Silicon: `claude-hook-notifications-darwin-arm64.tar.gz`
+   - Intel: `claude-hook-notifications-darwin-amd64.tar.gz`
+4. Extract and place the `notify` binary in the plugin's `bin/` directory
+
+### Wrong Installation Path
+
+The plugin should be installed at:
+- **Marketplace:** `~/.claude/plugins/marketplaces/claude-hook-notifications-marketplace/claude-hook-notifications/`
+- **Manual:** `~/.claude/plugins/claude-hook-notifications/`
+
+The `${CLAUDE_PLUGIN_ROOT}` variable in hooks automatically resolves to the correct path.
 
 ## License
 
