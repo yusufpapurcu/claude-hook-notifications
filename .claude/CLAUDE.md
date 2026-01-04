@@ -15,15 +15,15 @@ This is particularly useful when running long-running tasks or when you're worki
 
 The plugin consists of:
 
-- **Binary**: `bin/notify` - A Go binary that handles notification delivery and logging
+- **TypeScript Source**: `src/notify.ts` - Handles notification delivery and logging
 - **Hook Configuration**: `hooks/hooks.json` - Maps Claude Code hook events to notification commands
 - **Plugin Manifest**: `.claude-plugin/plugin.json` - Declares the plugin to Claude Code
 
 ### How It Works
 
 1. Claude Code triggers hooks at specific lifecycle events (Stop, PermissionRequest)
-2. The hook configuration executes the `notify` binary with the appropriate event type
-3. The binary receives hook context via stdin (session ID, project path, etc.)
+2. The hook configuration executes `npx tsx src/notify.ts` with the appropriate event type
+3. The script receives hook context via stdin (session ID, project path, etc.)
 4. A macOS notification is sent using `terminal-notifier`
 5. The event is logged to `~/.claude/hook-notifications.log`
 
@@ -63,11 +63,11 @@ Log format:
 ## Prerequisites
 
 - macOS (uses macOS notification system)
+- Node.js (for running TypeScript)
 - [terminal-notifier](https://github.com/julienXX/terminal-notifier) installed via Homebrew:
   ```bash
   brew install terminal-notifier
   ```
-- Go 1.23+ (for building the binary)
 
 ## Installation
 
@@ -77,18 +77,14 @@ Log format:
    cd claude-hook-notifications
    ```
 
-2. Build the notification binary:
+2. Install dependencies:
    ```bash
-   make build
-   # Or manually:
-   go build -o bin/notify main.go
+   npm install
    ```
 
 3. Install the plugin to Claude Code:
    ```bash
-   make install
-   # Or manually copy to Claude plugins directory:
-   # cp -r . ~/.claude/plugins/claude-hook-notifications
+   npm run plugin:install
    ```
 
 4. Ensure `terminal-notifier` is installed:
@@ -107,15 +103,12 @@ Once installed, the plugin runs automatically in the background. You'll receive 
 
 The plugin provides the following slash command:
 
-- `/install-notifications` - Automatically download and install the notification binary for your system
+- `/install-notifications` - Install dependencies and verify the plugin setup
 
 When you run this command in Claude Code, Claude will:
-1. Check if the binary is already installed
-2. Run the installation script if needed
-3. Verify terminal-notifier is installed
-4. Test the binary and show recent notifications
-
-This command is particularly useful for marketplace installations where the binary isn't included in the repository.
+1. Install npm dependencies
+2. Verify terminal-notifier is installed
+3. Test the notification system
 
 No other manual interaction is required - the plugin integrates seamlessly with Claude Code's hook system.
 
@@ -125,38 +118,39 @@ No other manual interaction is required - the plugin integrates seamlessly with 
 
 ```
 .
-├── main.go                    # Main notification binary
-├── install.sh                 # Binary installation script
-├── bin/                       # Compiled binaries
-│   └── notify                 # The notification executable
+├── src/
+│   └── notify.ts              # Main notification script
 ├── hooks/
-│   └── hooks.json            # Hook configuration for Claude Code
+│   └── hooks.json             # Hook configuration for Claude Code
 ├── commands/
 │   └── install-notifications.md  # Installation slash command
 ├── .claude/
-│   └── CLAUDE.md             # This file
-└── .claude-plugin/
-    ├── plugin.json           # Plugin manifest
-    └── marketplace.json      # Marketplace configuration
+│   └── CLAUDE.md              # This file
+├── .claude-plugin/
+│   ├── plugin.json            # Plugin manifest
+│   └── marketplace.json       # Marketplace configuration
+├── package.json               # Node.js dependencies
+└── README.md                  # User documentation
 ```
 
-### Building
+### Testing
 
 ```bash
-# Build the binary
-go build -o bin/notify main.go
+# Install dependencies
+npm install
 
 # Test the notification manually
-echo '{"cwd":"/path/to/project"}' | ./bin/notify stop
-echo '{"cwd":"/path/to/project"}' | ./bin/notify permission-request
+echo '{"cwd":"/path/to/project"}' | npx tsx src/notify.ts stop
+echo '{"cwd":"/path/to/project"}' | npx tsx src/notify.ts permission-request
 ```
 
 ### Code Structure
 
-- `main.go:31-70` - Main entry point and event routing
-- `main.go:73-90` - Hook context parsing from stdin
-- `main.go:92-129` - macOS notification delivery via terminal-notifier
-- `main.go:131-162` - Event logging to `~/.claude/hook-notifications.log`
+- `src/notify.ts:1-30` - Imports and constants
+- `src/notify.ts:32-50` - Hook context parsing from stdin
+- `src/notify.ts:52-80` - macOS notification delivery via terminal-notifier
+- `src/notify.ts:82-95` - Event logging to `~/.claude/hook-notifications.log`
+- `src/notify.ts:97-130` - Main entry point and event routing
 
 ## Working with Claude Code
 
@@ -166,9 +160,8 @@ When Claude Code is working with this codebase, here are some helpful tips:
 
 **Testing the plugin:**
 ```bash
-# Build and test
-go build -o bin/notify main.go
-echo '{"cwd":"'$(pwd)'"}' | ./bin/notify stop
+npm install
+echo '{"cwd":"'$(pwd)'"}' | npx tsx src/notify.ts stop
 ```
 
 **Checking logs:**
