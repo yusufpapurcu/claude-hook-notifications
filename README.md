@@ -32,6 +32,8 @@ cd claude-hook-notifications
 
 # Install to Claude plugins directory
 cp -r . ~/.claude/plugins/claude-hook-notifications
+
+# Restart Claude Code to load the plugin
 ```
 
 #### Option 2: Build from Source
@@ -46,6 +48,8 @@ cd claude-hook-notifications
 # Build and install
 make build
 make install
+
+# Restart Claude Code to load the plugin
 ```
 
 That's it! Notifications will now appear automatically when Claude Code completes tasks or requests permissions.
